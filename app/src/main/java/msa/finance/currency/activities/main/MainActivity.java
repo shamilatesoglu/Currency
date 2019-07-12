@@ -4,9 +4,10 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +30,7 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import msa.finance.currency.R;
+import msa.finance.currency.dialogs.CurrencyListDialogFragment;
 import msa.finance.currency.adapters.CurrencyRecyclerViewAdapter;
 import msa.finance.currency.data.Rate;
 
@@ -50,13 +52,16 @@ public class MainActivity extends AppCompatActivity {
     TextView timeTextView;
 
     @BindView(R.id.progress_circular)
-    ProgressBar mProgressBar;
+    ProgressBar progressBar;
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
+
+    @BindView(R.id.content)
+    ConstraintLayout constraintLayout;
 
     private CurrenciesViewModel mCurrenciesViewModel;
 
@@ -65,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> mCurrencyCodeList;
 
     public static Set<String> currenciesToShow;
+
+    private Snackbar mAPIAvailabilitySnackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,12 +86,20 @@ public class MainActivity extends AppCompatActivity {
         configureRecyclerView();
         configureFloatingActionButton();
         initializeViewModel();
+
+        mAPIAvailabilitySnackbar = Snackbar.make(constraintLayout, R.string.error_api_not_available, Snackbar.LENGTH_INDEFINITE);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     private void configureNavigationView() {
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.nav_settings:
+
                     break;
                 case R.id.nav_about:
                     break;
@@ -126,26 +141,39 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeViewModel() {
         mCurrenciesViewModel = ViewModelProviders.of(this).get(CurrenciesViewModel.class);
+
         mCurrenciesViewModel.getLatestRates().observe(this, latestRatesResponse -> {
             if (latestRatesResponse != null) {
-                mCurrencyRecyclerViewAdapter.setBaseRateCode(latestRatesResponse.getBaseCurrency());
+                mCurrenciesViewModel.getAPIAvailability().setValue(latestRatesResponse.isSuccessful());
+                if (latestRatesResponse.isSuccessful()) {
+                    mCurrencyRecyclerViewAdapter.setBaseRateCode(latestRatesResponse.getBaseCurrency());
 
-                List<Rate> rateList = new ArrayList<>();
-                for (String c : currenciesToShow) {
-                    rateList.add(new Rate(c, latestRatesResponse.getRate(c)));
+                    List<Rate> rateList = new ArrayList<>();
+                    for (String c : currenciesToShow) {
+                        rateList.add(new Rate(c, latestRatesResponse.getRate(c)));
+                    }
+
+                    mCurrencyRecyclerViewAdapter.setRateList(rateList);
+                    mCurrencyRecyclerViewAdapter.notifyDataSetChanged();
+
+                    baseCurrencyTextView.setText(String.format("BASE: %s", latestRatesResponse.getBaseCurrency()));
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
+                    timeTextView.setText(simpleDateFormat.format(latestRatesResponse.getTimestamp()));
+
+                    progressBar.setProgress(latestRatesResponse.getProgressUntilNextCall());
+
+                    mCurrencyCodeList = latestRatesResponse.getCurrencyCodeList();
                 }
+            } else
+                mCurrenciesViewModel.getAPIAvailability().setValue(false);
+        });
 
-                mCurrencyRecyclerViewAdapter.setRateList(rateList);
-
-                mCurrencyRecyclerViewAdapter.notifyDataSetChanged();
-
-                baseCurrencyTextView.setText(String.format("BASE: %s", latestRatesResponse.getBaseCurrency()));
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
-                timeTextView.setText(simpleDateFormat.format(latestRatesResponse.getTimestamp()));
-
-                mProgressBar.setProgress(latestRatesResponse.getProgressUntilNextCall());
-
-                mCurrencyCodeList = latestRatesResponse.getCurrencyCodeList();
+        mCurrenciesViewModel.getAPIAvailability().observe(this, available -> {
+            if (available != null) {
+                if (!available) {
+                    mAPIAvailabilitySnackbar.show();
+                    progressBar.setProgress(0);
+                } else if (mAPIAvailabilitySnackbar.isShown()) mAPIAvailabilitySnackbar.dismiss();
             }
         });
     }

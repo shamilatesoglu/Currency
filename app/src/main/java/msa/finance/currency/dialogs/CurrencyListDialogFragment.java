@@ -1,4 +1,4 @@
-package msa.finance.currency.activities.main;
+package msa.finance.currency.dialogs;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,6 +24,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import msa.finance.currency.R;
+import msa.finance.currency.activities.main.MainActivity;
 
 import static msa.finance.currency.util.Constants.COUNTRY_FLAG_API_FORMAT;
 import static msa.finance.currency.util.Constants.CURRENCY_CODE_TO_COUNTRY_CODE_MAP;
@@ -38,10 +39,8 @@ import static msa.finance.currency.util.Constants.CURRENCY_CODE_TO_COUNTRY_CODE_
  */
 public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_CURRENCY_CODES = "currency_codes";
 
-    // TODO: Customize parameters
     public static CurrencyListDialogFragment newInstance(ArrayList<String> currencyCodeList) {
         final CurrencyListDialogFragment fragment = new CurrencyListDialogFragment();
         final Bundle args = new Bundle();

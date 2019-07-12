@@ -62,6 +62,7 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                     .into(((CurrencyViewHolder) viewHolder).sourceCurrencyFlagImageView);
             Picasso.get().load(String.format(COUNTRY_FLAG_API_FORMAT, CURRENCY_CODE_TO_COUNTRY_CODE_MAP.get(mRateList.get(position).getCurrencyCode())))
                     .into(((CurrencyViewHolder) viewHolder).targetCurrencyFlagImageView);
+
             ((CurrencyViewHolder) viewHolder).valueTextView.setSelected(true);
             ((CurrencyViewHolder) viewHolder).baseCurrencyCodeTextView.setSelected(true);
         }

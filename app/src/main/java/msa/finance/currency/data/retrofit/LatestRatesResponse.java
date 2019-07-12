@@ -65,4 +65,10 @@ public class LatestRatesResponse {
         return mProgressUntilNextCall;
     }
 
+
+    public boolean isSuccessful() {
+        return mSuccess;
+    }
+
+
 }

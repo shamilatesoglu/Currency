@@ -51,7 +51,7 @@
         android:clipToPadding="false"
         android:paddingTop="@dimen/list_item_spacing_half"
         android:paddingBottom="@dimen/list_item_spacing_half"
-        tools:context=".activities.main.CurrencyListDialogFragment"
+        tools:context=".dialogs.CurrencyListDialogFragment"
         tools:listitem="@layout/fragment_currency_list_dialog_item" />
 
 </LinearLayout>
