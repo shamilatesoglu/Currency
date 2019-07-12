@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <group
+        android:id="@+id/nav_group_settings"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_24dp"
+            android:title="@string/settings" />
+    </group>
+
+
+    <separator />
+
+    <group
+        android:id="@+id/nav_group_about"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_info_4dp"
+            android:title="@string/about" />
+    </group>
+
+</menu>
