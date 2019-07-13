@@ -93,7 +93,7 @@
                     android:paddingTop="3dp"
                     android:paddingEnd="8dp"
                     android:paddingBottom="3dp"
-                    android:text="17.09.2019 22:54:22"
+                    android:text="@string/loading"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
                     android:textStyle="normal"
