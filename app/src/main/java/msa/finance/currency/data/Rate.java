@@ -16,4 +16,12 @@ public class Rate {
     public Double getValue() {
         return mValue;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Rate) {
+            return ((Rate) o).mCurrencyCode.equals(this.mCurrencyCode) && ((Rate) o).mValue.equals(getValue());
+        }
+        return false;
+    }
 }

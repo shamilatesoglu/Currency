@@ -47,6 +47,8 @@ public class SettingsDialogFragment extends BottomSheetDialogFragment {
         precisionEditText.setError((!precisionStr.isEmpty()) ? null : "Field cannot be empty!");
         updateIntervalEditText.setError((!updateIntervalStr.isEmpty()) ? null : "Field cannot be empty!");
 
+        updateIntervalEditText.setError((Integer.valueOf(updateIntervalStr) >= 1) ?null : "The value must be greater than 0!");
+
         if (precisionEditText.getError() == null && updateIntervalEditText.getError() == null) {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
             SharedPreferences.Editor editor = sharedPreferences.edit();

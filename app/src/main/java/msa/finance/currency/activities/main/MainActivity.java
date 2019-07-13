@@ -16,17 +16,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,7 +35,7 @@ import msa.finance.currency.dialogs.AboutDialogFragment;
 import msa.finance.currency.dialogs.CurrencyListDialogFragment;
 import msa.finance.currency.dialogs.SettingsDialogFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CurrencyListDialogFragment.CurrencyListEditFinishedListener {
 
     @BindView(R.id.currency_recyclerview)
     RecyclerView currencyRecyclerView;
@@ -73,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<String> mCurrencyCodeList;
 
-    public static Set<String> currenciesToShow;
+    private List<String> mCurrenciesToShowList;
 
     private Snackbar mAPIAvailabilitySnackbar;
 
@@ -105,7 +102,10 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.nav_settings:
-                    SettingsDialogFragment.newInstance().addOnClickListener(v -> renewUpdateInterval()).show(getSupportFragmentManager(), "SettingsDialog");
+                    SettingsDialogFragment.newInstance().addOnClickListener(v -> {
+                        renewUpdateInterval();
+                        mCurrencyRecyclerViewAdapter.notifyDataSetChanged();
+                    }).show(getSupportFragmentManager(), "SettingsDialog");
                     break;
                 case R.id.nav_about:
                     AboutDialogFragment.newInstance().show(getSupportFragmentManager(), "AboutDialog");
@@ -117,11 +117,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeCurrenciesToShow() {
-        currenciesToShow = new HashSet<>();
+        mCurrenciesToShowList = new ArrayList<>();
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String currencies = sharedPref.getString(getString(R.string.pref_key_currencies_to_show), "USD,TRY,GBP");
+        String currencies = sharedPref.getString(getString(R.string.pref_key_currencies_to_show), "USD,GBP,TRY");
         if (currencies != null)
-            currenciesToShow.addAll(Arrays.asList(currencies.split(",")));
+            mCurrenciesToShowList.addAll(Arrays.asList(currencies.split(",")));
     }
 
     private void configureToolbar() {
@@ -145,7 +145,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void configureFloatingActionButton() {
         floatingActionButton.setOnClickListener(view -> {
-            CurrencyListDialogFragment.newInstance(mCurrencyCodeList).show(getSupportFragmentManager(), "CurrencyListDialog");
+            CurrencyListDialogFragment.newInstance(mCurrencyCodeList)
+                    .setInitialCurrenciesToShowList(mCurrenciesToShowList)
+                    .show(getSupportFragmentManager(), "CurrencyListDialog");
         });
     }
 
@@ -159,12 +161,11 @@ public class MainActivity extends AppCompatActivity {
                     mCurrencyRecyclerViewAdapter.setBaseRateCode(latestRatesResponse.getBaseCurrency());
 
                     List<Rate> rateList = new ArrayList<>();
-                    for (String c : currenciesToShow) {
+                    for (String c : mCurrenciesToShowList) {
                         rateList.add(new Rate(c, latestRatesResponse.getRate(c)));
                     }
 
-                    mCurrencyRecyclerViewAdapter.setRateList(rateList);
-                    mCurrencyRecyclerViewAdapter.notifyDataSetChanged();
+                    mCurrencyRecyclerViewAdapter.checkIfDataSetChanged(rateList);
 
                     baseCurrencyTextView.setText(String.format("BASE: %s", latestRatesResponse.getBaseCurrency()));
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
@@ -198,4 +199,8 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onFinishEditing(List<String> newCurrenciesToShowList) {
+        mCurrenciesToShowList = newCurrenciesToShowList;
+    }
 }

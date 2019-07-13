@@ -47,6 +47,24 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         mBaseRateCode = baseRateCode;
     }
 
+    public void checkIfDataSetChanged(List<Rate> newRateList) {
+        List<Rate> oldRateList = new ArrayList<>(mRateList);
+        mRateList = newRateList;
+        for (int i = 0; i < ((oldRateList.size() > mRateList.size()) ? oldRateList.size() : mRateList.size()); i++) {
+            if (oldRateList.size() < mRateList.size()) {
+                if (i < oldRateList.size()) {
+                    if (!oldRateList.get(i).equals(mRateList.get(i)))
+                        notifyItemChanged(i);
+                } else notifyItemInserted(i);
+            } else {
+                if (i < mRateList.size()) {
+                    if (!mRateList.get(i).equals(oldRateList.get(i)))
+                        notifyItemChanged(i);
+                } else notifyItemRemoved(i);
+            }
+        }
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

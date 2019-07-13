@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:text="@string/pref_title_precision"
             android:textColor="@color/colorPrimary"
-            android:textSize="24sp"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -88,7 +88,7 @@
             android:layout_height="wrap_content"
             android:text="@string/pref_title_update_interval"
             android:textColor="@color/colorPrimary"
-            android:textSize="24sp"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

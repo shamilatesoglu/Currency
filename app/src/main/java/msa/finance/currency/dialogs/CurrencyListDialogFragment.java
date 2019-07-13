@@ -1,6 +1,7 @@
 package msa.finance.currency.dialogs;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -24,7 +25,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import msa.finance.currency.R;
-import msa.finance.currency.activities.main.MainActivity;
 
 import static msa.finance.currency.util.Constants.COUNTRY_FLAG_API_FORMAT;
 import static msa.finance.currency.util.Constants.CURRENCY_CODE_TO_COUNTRY_CODE_MAP;
@@ -36,6 +36,8 @@ import static msa.finance.currency.util.Constants.CURRENCY_CODE_TO_COUNTRY_CODE_
  *     CurrencyListDialogFragment.newInstance(30).show(getSupportFragmentManager(), "dialog");
  * </pre>
  * <p>You activity (or fragment) needs to implement {@link CurrencyListDialogFragment}.</p>
+ * <p>
+ * TODO: Add onDismissListener
  */
 public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
 
@@ -49,6 +51,25 @@ public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
         return fragment;
     }
 
+    private CurrencyListEditFinishedListener mListener;
+
+    private List<String> mNewCurrenciesToShowList = new ArrayList<>();
+
+    public CurrencyListDialogFragment setInitialCurrenciesToShowList(List<String> initialCurrenciesToShowList) {
+        mNewCurrenciesToShowList = new ArrayList<>(initialCurrenciesToShowList);
+        return this;
+    }
+
+    public interface CurrencyListEditFinishedListener {
+        void onFinishEditing(List<String> newCurrenciesToShowList);
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        mListener.onFinishEditing(mNewCurrenciesToShowList);
+        super.onDismiss(dialog);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -58,7 +79,7 @@ public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        final RecyclerView recyclerView = view.findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         assert getArguments() != null;
         ArrayList<String> currencyCodeList = getArguments().getStringArrayList(ARG_CURRENCY_CODES);
@@ -72,6 +93,12 @@ public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        try {
+            mListener = (CurrencyListEditFinishedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement CurrencyListEditFinishedListener");
+        }
     }
 
     @Override
@@ -128,26 +155,32 @@ public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             String currencyCode = mCurrencyCodeList.get(position);
+            holder.countryFlagImageView.setImageDrawable(null);
             Picasso.get().load(String.format(COUNTRY_FLAG_API_FORMAT, CURRENCY_CODE_TO_COUNTRY_CODE_MAP.get(currencyCode)))
                     .into(holder.countryFlagImageView);
             holder.currencyCodeTextView.setText(currencyCode);
-            holder.currencyCheckBox.setChecked(MainActivity.currenciesToShow.contains(currencyCode));
+            holder.currencyCheckBox.setChecked(mNewCurrenciesToShowList.contains(currencyCode));
 
             holder.itemLayout.setOnClickListener(v -> {
                 holder.currencyCheckBox.toggle();
                 if (holder.currencyCheckBox.isChecked()) {
-                    MainActivity.currenciesToShow.add(currencyCode);
-                } else MainActivity.currenciesToShow.remove(currencyCode);
+                    if (!mNewCurrenciesToShowList.contains(currencyCode))
+                        mNewCurrenciesToShowList.add(currencyCode);
+                } else mNewCurrenciesToShowList.remove(currencyCode);
 
                 StringBuilder currencies = new StringBuilder();
-                for (String c : MainActivity.currenciesToShow) {
+                for (String c : mNewCurrenciesToShowList) {
                     currencies.append(c).append(",");
                 }
 
+                if (currencies.length() > 0)
+                    currencies = currencies.deleteCharAt(currencies.length() - 1);
+
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putString(getString(R.string.pref_key_currencies_to_show), currencies.deleteCharAt(currencies.length() - 1).toString());
+                editor.putString(getString(R.string.pref_key_currencies_to_show), currencies.toString());
                 editor.apply();
+
             });
         }
 
