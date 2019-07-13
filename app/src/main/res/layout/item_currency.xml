@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
                 android:singleLine="true"
-                android:text="→"
+                android:text="@string/right_arrow"
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimary"
                 android:textSize="24sp"
