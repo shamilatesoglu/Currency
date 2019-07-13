@@ -1,6 +1,7 @@
 package msa.finance.currency.adapters;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,10 +20,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import msa.finance.currency.R;
 import msa.finance.currency.data.Rate;
+import msa.finance.currency.util.Utilities;
 
 import static msa.finance.currency.util.Constants.COUNTRY_FLAG_API_FORMAT;
 import static msa.finance.currency.util.Constants.CURRENCY_CODE_TO_COUNTRY_CODE_MAP;
-import static msa.finance.currency.util.Constants.TR;
 
 
 public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -56,11 +57,16 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         if (mRateList.size() > 0) {
             ((CurrencyViewHolder) viewHolder).baseCurrencyCodeTextView.setText(String.format("1 %s", mBaseRateCode));
-            ((CurrencyViewHolder) viewHolder).valueTextView.setText(String.format(Locale.getDefault(), "%f %s",
-                    mRateList.get(position).getValue(), mRateList.get(position).getCurrencyCode()));
-            Picasso.get().load(String.format(COUNTRY_FLAG_API_FORMAT, CURRENCY_CODE_TO_COUNTRY_CODE_MAP.get(mBaseRateCode)))
+            ((CurrencyViewHolder) viewHolder).valueTextView.setText(String.format(Locale.getDefault(), "%s %s",
+                    Utilities.round(mRateList.get(position).getValue(),
+                            PreferenceManager.getDefaultSharedPreferences(mContext).getInt(mContext.getString(R.string.pref_key_precision), 5)), mRateList.get(position).getCurrencyCode()));
+
+            // Country flags.
+            Picasso.get().load(String.format(COUNTRY_FLAG_API_FORMAT,
+                    CURRENCY_CODE_TO_COUNTRY_CODE_MAP.get(mBaseRateCode)))
                     .into(((CurrencyViewHolder) viewHolder).sourceCurrencyFlagImageView);
-            Picasso.get().load(String.format(COUNTRY_FLAG_API_FORMAT, CURRENCY_CODE_TO_COUNTRY_CODE_MAP.get(mRateList.get(position).getCurrencyCode())))
+            Picasso.get().load(String.format(COUNTRY_FLAG_API_FORMAT,
+                    CURRENCY_CODE_TO_COUNTRY_CODE_MAP.get(mRateList.get(position).getCurrencyCode())))
                     .into(((CurrencyViewHolder) viewHolder).targetCurrencyFlagImageView);
 
             ((CurrencyViewHolder) viewHolder).valueTextView.setSelected(true);

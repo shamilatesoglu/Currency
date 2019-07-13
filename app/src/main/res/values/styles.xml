@@ -22,4 +22,46 @@
         <item name="android:windowBackground">@drawable/splash_screen_background</item>
     </style>
 
+    <style name="LicencesLinearLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="android:layout_marginRight">12dp</item>
+        <item name="android:layout_marginLeft">12dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@color/subtleBlue</item>
+    </style>
+
+    <style name="AboutLinearLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">12dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@color/subtleBlue</item>
+    </style>
+
+    <style name="AboutTextViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:layout_margin">12dp</item>
+
+    </style>
+
+    <style name="LicenseTextViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">12dp</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="AppTheme.SettingsEditText" parent="Widget.AppCompat.EditText">
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:inputType">number</item>
+        <item name="android:minWidth">60dp</item>
+        <item name="android:theme">@style/AppTheme.NoActionBar</item>
+    </style>
+
 </resources>

@@ -16,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -30,9 +31,12 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import msa.finance.currency.R;
-import msa.finance.currency.dialogs.CurrencyListDialogFragment;
 import msa.finance.currency.adapters.CurrencyRecyclerViewAdapter;
 import msa.finance.currency.data.Rate;
+import msa.finance.currency.data.repository.LatestRatesRepository;
+import msa.finance.currency.dialogs.AboutDialogFragment;
+import msa.finance.currency.dialogs.CurrencyListDialogFragment;
+import msa.finance.currency.dialogs.SettingsDialogFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -88,22 +92,26 @@ public class MainActivity extends AppCompatActivity {
         initializeViewModel();
 
         mAPIAvailabilitySnackbar = Snackbar.make(constraintLayout, R.string.error_api_not_available, Snackbar.LENGTH_INDEFINITE);
+        renewUpdateInterval();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void renewUpdateInterval() {
+        LatestRatesRepository.updateIntervalMillis =
+                PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.pref_key_update_interval), 2) * 1000;
     }
+
 
     private void configureNavigationView() {
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.nav_settings:
-
+                    SettingsDialogFragment.newInstance().addOnClickListener(v -> renewUpdateInterval()).show(getSupportFragmentManager(), "SettingsDialog");
                     break;
                 case R.id.nav_about:
+                    AboutDialogFragment.newInstance().show(getSupportFragmentManager(), "AboutDialog");
                     break;
             }
+            drawerLayout.closeDrawers();
             return true;
         });
     }
@@ -119,8 +127,10 @@ public class MainActivity extends AppCompatActivity {
     private void configureToolbar() {
         setSupportActionBar(toolbar);
         try {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_24dp);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_24dp);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

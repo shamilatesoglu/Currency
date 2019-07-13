@@ -2,7 +2,6 @@ package msa.finance.currency.util;
 
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class Constants {
     // TODO: Obfuscate the API key.
@@ -14,8 +13,6 @@ public class Constants {
     public static final int JSON_FORMAT_COMPACT = 0;
 
     public static final Locale TR = new Locale("tr");
-
-    public static final long DELAY = 2000;
 
     public static final HashMap<String, String> CURRENCY_CODE_TO_COUNTRY_CODE_MAP = new HashMap<String, String>() {{
         put("AED", "AE");

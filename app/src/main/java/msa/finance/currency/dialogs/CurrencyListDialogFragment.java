@@ -62,9 +62,11 @@ public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         assert getArguments() != null;
         ArrayList<String> currencyCodeList = getArguments().getStringArrayList(ARG_CURRENCY_CODES);
-        assert currencyCodeList != null;
-        int itemCount = currencyCodeList.size();
-        recyclerView.setAdapter(new CurrencyAdapter(itemCount, currencyCodeList));
+
+        if (currencyCodeList != null) {
+            int itemCount = currencyCodeList.size();
+            recyclerView.setAdapter(new CurrencyAdapter(itemCount, currencyCodeList));
+        } else dismiss();
     }
 
     @Override

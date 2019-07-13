@@ -7,19 +7,20 @@ import android.util.Log;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
+import msa.finance.currency.data.retrofit.FixerRetrofitFactory;
 import msa.finance.currency.data.retrofit.LatestRatesResponse;
 import msa.finance.currency.data.retrofit.LatestRatesService;
-import msa.finance.currency.data.retrofit.FixerRetrofitFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static msa.finance.currency.util.Constants.API_KEY;
-import static msa.finance.currency.util.Constants.DELAY;
 import static msa.finance.currency.util.Constants.JSON_FORMAT_COMPACT;
 
 public class LatestRatesRepository {
     private static LatestRatesRepository sLatestRatesRepository;
+
+    public static long updateIntervalMillis = 2000;
 
     public static LatestRatesRepository getInstance() {
         return (sLatestRatesRepository == null) ? sLatestRatesRepository = new LatestRatesRepository() : sLatestRatesRepository;
@@ -45,8 +46,8 @@ public class LatestRatesRepository {
             @Override
             public void onResponse(Call<LatestRatesResponse> call, Response<LatestRatesResponse> response) {
                 if (response.isSuccessful()) {
-                    assert response.body() != null;
-                    booleanMutableLiveData.setValue(response.body().isSuccessful());
+                    if (response.body() != null)
+                        booleanMutableLiveData.setValue(response.body().isSuccessful());
                 }
             }
 
@@ -61,13 +62,13 @@ public class LatestRatesRepository {
     private void post(long millisPassed) {
         AtomicLong millis = new AtomicLong(millisPassed);
         new Handler().postDelayed(() -> {
-            millis.addAndGet(DELAY / 100);
-            updateProgressUntilNextCall((int) (((float) millis.get() / ((float) DELAY)) * 100));
-            if (millis.get() >= DELAY) {
+            millis.addAndGet(updateIntervalMillis / 100);
+            updateProgressUntilNextCall((int) (((float) millis.get() / ((float) updateIntervalMillis)) * 100));
+            if (millis.get() >= updateIntervalMillis) {
                 makeCall();
             } else post(millis.get());
-            Log.i("CALL", "Loading: " + ((int) (((float) millis.get() / ((float) DELAY)) * 100)));
-        }, DELAY / 100);
+            Log.d("CALL", "Loading: " + ((int) (((float) millis.get() / ((float) updateIntervalMillis)) * 100)));
+        }, updateIntervalMillis / 100);
     }
 
     private void updateProgressUntilNextCall(int progress) {
@@ -83,7 +84,7 @@ public class LatestRatesRepository {
             @Override
             public void onResponse(Call<LatestRatesResponse> call, Response<LatestRatesResponse> response) {
                 if (response.isSuccessful()) {
-                    Log.i("CALL", "Successful.");
+                    Log.d("CALL", "Successful.");
                     assert response.body() != null;
 
                     response.body().setTimestamp(new Date().getTime());
