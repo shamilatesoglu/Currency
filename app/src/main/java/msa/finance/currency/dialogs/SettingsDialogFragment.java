@@ -1,5 +1,6 @@
 package msa.finance.currency.dialogs;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,14 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import msa.finance.currency.R;
+import msa.finance.currency.data.repository.SettingsRepository;
+
+import static msa.finance.currency.util.Constants.COUNTRY_FLAG_API_FORMAT;
+import static msa.finance.currency.util.Constants.CURRENCY_CODE_TO_COUNTRY_CODE_MAP;
 
 public class SettingsDialogFragment extends BottomSheetDialogFragment {
     public static SettingsDialogFragment newInstance() {
@@ -30,14 +36,32 @@ public class SettingsDialogFragment extends BottomSheetDialogFragment {
     @BindView(R.id.pref_update_interval_edittext)
     EditText updateIntervalEditText;
 
+    @BindView(R.id.pref_display_base_currency_textview)
+    TextView baseCurrencyTextView;
+
     @BindView(R.id.save_button)
     Button saveButton;
 
-    private List<View.OnClickListener> mAdditionalOnClickListeners = new ArrayList<>();
+    @OnClick(R.id.pref_base_currency)
+    public void onBaseCurrencyPreferenceClick() {
+        mListener.onBaseCurrencyPreferenceClick();
+        dismiss();
+    }
 
-    public SettingsDialogFragment addOnClickListener(View.OnClickListener onClickListener) {
-        mAdditionalOnClickListeners.add(onClickListener);
-        return this;
+    @BindView(R.id.base_currency_imageview)
+    ImageView baseCurrencyImageView;
+
+    private BaseCurrencyPreferenceClickListener mListener;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (BaseCurrencyPreferenceClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement BaseCurrencyPreferenceClickListener");
+        }
     }
 
     @OnClick(R.id.save_button)
@@ -47,7 +71,7 @@ public class SettingsDialogFragment extends BottomSheetDialogFragment {
         precisionEditText.setError((!precisionStr.isEmpty()) ? null : "Field cannot be empty!");
         updateIntervalEditText.setError((!updateIntervalStr.isEmpty()) ? null : "Field cannot be empty!");
 
-        updateIntervalEditText.setError((Integer.valueOf(updateIntervalStr) >= 1) ?null : "The value must be greater than 0!");
+        updateIntervalEditText.setError((Integer.valueOf(updateIntervalStr) >= 2) ? null : "The value must be greater than 1!");
 
         if (precisionEditText.getError() == null && updateIntervalEditText.getError() == null) {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -55,11 +79,19 @@ public class SettingsDialogFragment extends BottomSheetDialogFragment {
             editor.putInt(getString(R.string.pref_key_precision), Integer.valueOf(precisionStr));
             editor.putInt(getString(R.string.pref_key_update_interval), Integer.valueOf(updateIntervalStr));
             editor.apply();
+
+            SettingsRepository.getInstance().getSettings().setValue(new SettingsRepository.Settings(
+                    sharedPreferences.getString(getString(R.string.pref_key_base_currency), "EUR"),
+                    Integer.valueOf(precisionStr),
+                    Integer.valueOf(updateIntervalStr))
+            );
+
             dismiss();
-            for (View.OnClickListener onClickListener : mAdditionalOnClickListeners) {
-                onClickListener.onClick(v);
-            }
         }
+    }
+
+    public interface BaseCurrencyPreferenceClickListener {
+        void onBaseCurrencyPreferenceClick();
     }
 
     @Nullable
@@ -69,9 +101,13 @@ public class SettingsDialogFragment extends BottomSheetDialogFragment {
 
         ButterKnife.bind(this, root);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        precisionEditText.setText(String.valueOf(sharedPreferences.getInt(getString(R.string.pref_key_precision), 5)));
-        updateIntervalEditText.setText(String.valueOf(sharedPreferences.getInt(getString(R.string.pref_key_update_interval), 2)));
+        SettingsRepository.Settings settings = SettingsRepository.getInstance().getSettings().getValue();
+        precisionEditText.setText(String.valueOf(settings.getPrecision()));
+        updateIntervalEditText.setText(String.valueOf(settings.getUpdateInterval()));
+        baseCurrencyTextView.setText(settings.getBaseCurrencyCode());
+
+        Picasso.get().load(String.format(COUNTRY_FLAG_API_FORMAT, CURRENCY_CODE_TO_COUNTRY_CODE_MAP.get(settings.getBaseCurrencyCode())))
+                .into(baseCurrencyImageView);
 
         return root;
     }

@@ -61,12 +61,12 @@ public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
     }
 
     public interface CurrencyListEditFinishedListener {
-        void onFinishEditing(List<String> newCurrenciesToShowList);
+        void onFinishEditingCurrencyList(List<String> newCurrenciesToShowList);
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        mListener.onFinishEditing(mNewCurrenciesToShowList);
+        mListener.onFinishEditingCurrencyList(mNewCurrenciesToShowList);
         super.onDismiss(dialog);
     }
 
@@ -86,7 +86,7 @@ public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
 
         if (currencyCodeList != null) {
             int itemCount = currencyCodeList.size();
-            recyclerView.setAdapter(new CurrencyAdapter(itemCount, currencyCodeList));
+            recyclerView.setAdapter(new CurrencyListAdapter(itemCount, currencyCodeList));
         } else dismiss();
     }
 
@@ -134,15 +134,14 @@ public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
             super(view);
             ButterKnife.bind(this, view);
         }
-
     }
 
-    private class CurrencyAdapter extends RecyclerView.Adapter<ViewHolder> {
+    private class CurrencyListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         private final int mItemCount;
         private List<String> mCurrencyCodeList;
 
-        CurrencyAdapter(int itemCount, List<String> currencyCodeList) {
+        CurrencyListAdapter(int itemCount, List<String> currencyCodeList) {
             mItemCount = itemCount;
             mCurrencyCodeList = currencyCodeList;
         }

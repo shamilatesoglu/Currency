@@ -16,12 +16,12 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkConnectionToFixerAPI();
+        checkConnectionToAPI();
     }
 
-    private void checkConnectionToFixerAPI() {
+    private void checkConnectionToAPI() {
         Context context = this;
-        ViewModelProviders.of(this).get(SplashViewModel.class).getFixerAPIAvailability().observe(this, available -> {
+        ViewModelProviders.of(this).get(SplashViewModel.class).getAPIAvailability().observe(this, available -> {
             Toast infoToast = Toast.makeText(this, R.string.error_api_not_available, Toast.LENGTH_LONG);
             if (available != null) {
                 if (!available) {
@@ -34,8 +34,7 @@ public class SplashActivity extends AppCompatActivity {
                 intent.putExtra("api_availability", available);
                 startActivity(intent);
                 finish();
-            }, 3000);
-
+            }, 1000);
         });
     }
 }

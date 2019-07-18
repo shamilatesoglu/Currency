@@ -3,11 +3,11 @@ package msa.finance.currency.data.retrofit;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class FixerRetrofitFactory {
-    public static final String BASE_URL = "http://data.fixer.io/";
+public class ExchangeRatesAPIRetrofitFactory {
+    public static final String BASE_URL = "https://api.exchangeratesapi.io/";
     public static Retrofit retrofit = null;
 
-    private FixerRetrofitFactory() {
+    private ExchangeRatesAPIRetrofitFactory() {
     }
 
     public static Retrofit getRetrofitInstance() {

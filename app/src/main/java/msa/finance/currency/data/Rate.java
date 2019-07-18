@@ -24,4 +24,8 @@ public class Rate {
         }
         return false;
     }
+
+    public boolean isValid() {
+        return mValue != null && mCurrencyCode.length() == 3;
+    }
 }

@@ -15,11 +15,13 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import msa.finance.currency.R;
 import msa.finance.currency.data.Rate;
+import msa.finance.currency.data.repository.ExchangeRatesRepository;
 import msa.finance.currency.util.Utilities;
 
 import static msa.finance.currency.util.Constants.COUNTRY_FLAG_API_FORMAT;
@@ -30,7 +32,7 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     private Context mContext;
 
-    private String mBaseRateCode;
+    private String mBaseCurrencyCode;
 
     private List<Rate> mRateList;
 
@@ -39,17 +41,16 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         mRateList = new ArrayList<>();
     }
 
-    public void setRateList(List<Rate> rateList) {
-        mRateList = rateList;
-    }
-
-    public void setBaseRateCode(String baseRateCode) {
-        mBaseRateCode = baseRateCode;
+    public void setBaseCurrencyCode(String baseCurrencyCode) {
+        mBaseCurrencyCode = baseCurrencyCode;
     }
 
     public void checkIfDataSetChanged(List<Rate> newRateList) {
         List<Rate> oldRateList = new ArrayList<>(mRateList);
         mRateList = newRateList;
+        if (mRateList.size() == 0){
+            notifyDataSetChanged();
+        }
         for (int i = 0; i < ((oldRateList.size() > mRateList.size()) ? oldRateList.size() : mRateList.size()); i++) {
             if (oldRateList.size() < mRateList.size()) {
                 if (i < oldRateList.size()) {
@@ -73,15 +74,16 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-        if (mRateList.size() > 0) {
-            ((CurrencyViewHolder) viewHolder).baseCurrencyCodeTextView.setText(String.format("1 %s", mBaseRateCode));
+        if (mRateList.size() > 0 && mRateList.get(position).isValid()) {
+            ((CurrencyViewHolder) viewHolder).baseCurrencyCodeTextView.setText(String.format("1 %s", mBaseCurrencyCode));
             ((CurrencyViewHolder) viewHolder).valueTextView.setText(String.format(Locale.getDefault(), "%s %s",
                     Utilities.round(mRateList.get(position).getValue(),
-                            PreferenceManager.getDefaultSharedPreferences(mContext).getInt(mContext.getString(R.string.pref_key_precision), 5)), mRateList.get(position).getCurrencyCode()));
+                            PreferenceManager.getDefaultSharedPreferences(mContext).getInt(mContext.getString(R.string.pref_key_precision), 5)),
+                    mRateList.get(position).getCurrencyCode()));
 
             // Country flags.
             Picasso.get().load(String.format(COUNTRY_FLAG_API_FORMAT,
-                    CURRENCY_CODE_TO_COUNTRY_CODE_MAP.get(mBaseRateCode)))
+                    CURRENCY_CODE_TO_COUNTRY_CODE_MAP.get(mBaseCurrencyCode)))
                     .into(((CurrencyViewHolder) viewHolder).sourceCurrencyFlagImageView);
             Picasso.get().load(String.format(COUNTRY_FLAG_API_FORMAT,
                     CURRENCY_CODE_TO_COUNTRY_CODE_MAP.get(mRateList.get(position).getCurrencyCode())))

@@ -22,7 +22,11 @@
     <string name="pref_title_precision">Precision</string>
     <string name="pref_key_precision">pref_key_precision</string>
     <string name="pref_key_update_interval">pref_key_update_interval</string>
+    <string name="pref_key_base_currency">pref_key_base_currency</string>
     <string name="save">SAVE</string>
     <string name="right_arrow">→</string>
     <string name="loading">Loading...</string>
+    <string name="pref_summary_base_currency">Tap to set base currency.</string>
+    <string name="pref_title_base_currency">Base Currency</string>
+    <string name="select_base_currency">SELECT BASE CURRENCY</string>
 </resources>

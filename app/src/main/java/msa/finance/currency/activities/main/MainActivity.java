@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -16,6 +17,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -27,15 +29,19 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import msa.finance.currency.R;
 import msa.finance.currency.adapters.CurrencyRecyclerViewAdapter;
 import msa.finance.currency.data.Rate;
-import msa.finance.currency.data.repository.LatestRatesRepository;
+import msa.finance.currency.data.repository.SettingsRepository;
 import msa.finance.currency.dialogs.AboutDialogFragment;
+import msa.finance.currency.dialogs.BaseCurrencyListDialogFragment;
 import msa.finance.currency.dialogs.CurrencyListDialogFragment;
 import msa.finance.currency.dialogs.SettingsDialogFragment;
 
-public class MainActivity extends AppCompatActivity implements CurrencyListDialogFragment.CurrencyListEditFinishedListener {
+public class MainActivity extends AppCompatActivity implements CurrencyListDialogFragment.CurrencyListEditFinishedListener,
+        BaseCurrencyListDialogFragment.BaseCurrencyEditFinishedListener,
+        SettingsDialogFragment.BaseCurrencyPreferenceClickListener {
 
     @BindView(R.id.currency_recyclerview)
     RecyclerView currencyRecyclerView;
@@ -48,6 +54,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
 
     @BindView(R.id.base_currency_textview)
     TextView baseCurrencyTextView;
+
+    @OnClick(R.id.base_currency_textview)
+    public void onClickBaseCurrencyTextView(View v) {
+        BaseCurrencyListDialogFragment.newInstance(mCurrencyCodeList).show(getSupportFragmentManager(), "BaseCurrencyDialog");
+    }
 
     @BindView(R.id.time_textview)
     TextView timeTextView;
@@ -65,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
     ConstraintLayout constraintLayout;
 
     private CurrenciesViewModel mCurrenciesViewModel;
+    private SettingsViewModel mSettingsViewModel;
 
     private CurrencyRecyclerViewAdapter mCurrencyRecyclerViewAdapter;
 
@@ -86,15 +98,27 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
         configureNavigationView();
         configureRecyclerView();
         configureFloatingActionButton();
+
+        initializeSettings();
+
         initializeViewModel();
 
         mAPIAvailabilitySnackbar = Snackbar.make(constraintLayout, R.string.error_api_not_available, Snackbar.LENGTH_INDEFINITE);
-        renewUpdateInterval();
     }
 
-    private void renewUpdateInterval() {
-        LatestRatesRepository.updateIntervalMillis =
-                PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.pref_key_update_interval), 2) * 1000;
+    private void initializeSettings() {
+        mSettingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel.class);
+        mSettingsViewModel.getSettings().observe(this, settings -> {
+            if (settings != null) {
+                baseCurrencyTextView.setText(String.format("BASE: %s", settings.getBaseCurrencyCode()));
+            }
+        });
+
+        mSettingsViewModel.getSettings().setValue(new SettingsRepository.Settings(
+                PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_key_base_currency), "EUR"),
+                PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.pref_key_precision), 5),
+                PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.pref_key_update_interval), 2)));
+
     }
 
 
@@ -102,10 +126,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.nav_settings:
-                    SettingsDialogFragment.newInstance().addOnClickListener(v -> {
-                        renewUpdateInterval();
-                        mCurrencyRecyclerViewAdapter.notifyDataSetChanged();
-                    }).show(getSupportFragmentManager(), "SettingsDialog");
+                    SettingsDialogFragment.newInstance().show(getSupportFragmentManager(), "SettingsDialog");
                     break;
                 case R.id.nav_about:
                     AboutDialogFragment.newInstance().show(getSupportFragmentManager(), "AboutDialog");
@@ -141,6 +162,15 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
         currencyRecyclerView.setAdapter(mCurrencyRecyclerViewAdapter);
         currencyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         currencyRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        currencyRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) {
+                    floatingActionButton.hide();
+                } else floatingActionButton.show();
+            }
+        });
     }
 
     private void configureFloatingActionButton() {
@@ -154,38 +184,44 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
     private void initializeViewModel() {
         mCurrenciesViewModel = ViewModelProviders.of(this).get(CurrenciesViewModel.class);
 
-        mCurrenciesViewModel.getLatestRates().observe(this, latestRatesResponse -> {
-            if (latestRatesResponse != null) {
-                mCurrenciesViewModel.getAPIAvailability().setValue(latestRatesResponse.isSuccessful());
-                if (latestRatesResponse.isSuccessful()) {
-                    mCurrencyRecyclerViewAdapter.setBaseRateCode(latestRatesResponse.getBaseCurrency());
+        mCurrenciesViewModel.getLatestRates().observe(this, exchangeRatesAPIResponse -> {
+            if (exchangeRatesAPIResponse != null) {
+                mCurrenciesViewModel.getAPIAvailability().setValue(exchangeRatesAPIResponse.isSuccessful());
+                if (exchangeRatesAPIResponse.isSuccessful()) {
+                    mCurrencyRecyclerViewAdapter.setBaseCurrencyCode(exchangeRatesAPIResponse.getBaseCurrency());
 
                     List<Rate> rateList = new ArrayList<>();
                     for (String c : mCurrenciesToShowList) {
-                        rateList.add(new Rate(c, latestRatesResponse.getRate(c)));
+                        Double rate = exchangeRatesAPIResponse.getRate(c);
+                        if (rate != null) {
+                            SettingsRepository.Settings settings = SettingsRepository.getInstance().getSettings().getValue();
+                            if (settings != null) {
+                                if (!c.equals(settings.getBaseCurrencyCode())) {
+                                    rateList.add(new Rate(c, exchangeRatesAPIResponse.getRate(c)));
+                                }
+                            }
+                        }
                     }
 
                     mCurrencyRecyclerViewAdapter.checkIfDataSetChanged(rateList);
 
-                    baseCurrencyTextView.setText(String.format("BASE: %s", latestRatesResponse.getBaseCurrency()));
+                    baseCurrencyTextView.setText(String.format("BASE: %s", exchangeRatesAPIResponse.getBaseCurrency()));
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
-                    timeTextView.setText(simpleDateFormat.format(latestRatesResponse.getTimestamp()));
+                    timeTextView.setText(simpleDateFormat.format(exchangeRatesAPIResponse.getTimestamp()));
 
-                    progressBar.setProgress(latestRatesResponse.getProgressUntilNextCall());
+                    progressBar.setProgress(exchangeRatesAPIResponse.getProgressUntilNextCall());
 
-                    mCurrencyCodeList = latestRatesResponse.getCurrencyCodeList();
-                }
+                    mCurrencyCodeList = exchangeRatesAPIResponse.getCurrencyCodeList();
+                } else mCurrenciesViewModel.getAPIAvailability().setValue(false);
             } else
                 mCurrenciesViewModel.getAPIAvailability().setValue(false);
         });
 
         mCurrenciesViewModel.getAPIAvailability().observe(this, available -> {
-            if (available != null) {
-                if (!available) {
-                    mAPIAvailabilitySnackbar.show();
-                    progressBar.setProgress(0);
-                } else if (mAPIAvailabilitySnackbar.isShown()) mAPIAvailabilitySnackbar.dismiss();
-            }
+            if (available == null || !available) {
+                mAPIAvailabilitySnackbar.show();
+                progressBar.setProgress(0);
+            } else if (mAPIAvailabilitySnackbar.isShown()) mAPIAvailabilitySnackbar.dismiss();
         });
     }
 
@@ -200,7 +236,22 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
     }
 
     @Override
-    public void onFinishEditing(List<String> newCurrenciesToShowList) {
+    public void onFinishEditingCurrencyList(List<String> newCurrenciesToShowList) {
         mCurrenciesToShowList = newCurrenciesToShowList;
+    }
+
+    @Override
+    public void onFinishEditingBaseCurrency(String newBaseCurrencyCode) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mSettingsViewModel.getSettings().setValue(new SettingsRepository.Settings(
+                newBaseCurrencyCode,
+                preferences.getInt(getString(R.string.pref_key_precision), 5),
+                preferences.getInt(getString(R.string.pref_key_update_interval), 2))
+        );
+    }
+
+    @Override
+    public void onBaseCurrencyPreferenceClick() {
+        BaseCurrencyListDialogFragment.newInstance(mCurrencyCodeList).show(getSupportFragmentManager(), "BaseCurrencyDialog");
     }
 }

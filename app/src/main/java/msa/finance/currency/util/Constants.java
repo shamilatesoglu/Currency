@@ -4,13 +4,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class Constants {
-    // TODO: Obfuscate the API key.
-    public static final String API_KEY = "f69d0f06e84748dd4a91a4f33d36da32";
-
     public static final String COUNTRY_FLAG_API_FORMAT = "https://www.countryflags.io/%s/flat/64.png";
-
-    public static final int JSON_FORMAT_PRETTIFIED = 1;
-    public static final int JSON_FORMAT_COMPACT = 0;
 
     public static final Locale TR = new Locale("tr");
 

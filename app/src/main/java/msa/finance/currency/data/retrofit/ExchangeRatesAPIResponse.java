@@ -5,13 +5,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-public class LatestRatesResponse {
-    @SerializedName("success")
-    @Expose
-    private boolean mSuccess;
-
+public class ExchangeRatesAPIResponse {
 
     @SerializedName("base")
     @Expose
@@ -35,6 +33,9 @@ public class LatestRatesResponse {
 
     public ArrayList<String> getCurrencyCodeList() {
         ArrayList<String> currencyCodeList = new ArrayList<>(mRates.keySet());
+        currencyCodeList.add(mBaseCurrency);
+        Set<String> unique = new HashSet<> (currencyCodeList);
+        currencyCodeList = new ArrayList<>(unique);
         Collections.sort(currencyCodeList);
         return currencyCodeList;
     }
@@ -63,10 +64,11 @@ public class LatestRatesResponse {
         return mProgressUntilNextCall;
     }
 
-
-    public boolean isSuccessful() {
-        return mSuccess;
+    public boolean isSuccessful () {
+        return mRates != null && mRates.size() > 0;
     }
 
-
+    public void setBaseCurrency(String baseCurrency) {
+        mBaseCurrency = baseCurrency;
+    }
 }
