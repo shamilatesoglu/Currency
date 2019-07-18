@@ -26,32 +26,27 @@ import static msa.finance.currency.util.Constants.COUNTRY_FLAG_API_FORMAT;
 import static msa.finance.currency.util.Constants.CURRENCY_CODE_TO_COUNTRY_CODE_MAP;
 
 public class SettingsDialogFragment extends BottomSheetDialogFragment {
+    @BindView(R.id.pref_precision_edittext)
+    EditText precisionEditText;
+    @BindView(R.id.pref_update_interval_edittext)
+    EditText updateIntervalEditText;
+    @BindView(R.id.pref_display_base_currency_textview)
+    TextView baseCurrencyTextView;
+    @BindView(R.id.save_button)
+    Button saveButton;
+    @BindView(R.id.base_currency_imageview)
+    ImageView baseCurrencyImageView;
+    private BaseCurrencyPreferenceClickListener mListener;
+
     public static SettingsDialogFragment newInstance() {
         return new SettingsDialogFragment();
     }
-
-    @BindView(R.id.pref_precision_edittext)
-    EditText precisionEditText;
-
-    @BindView(R.id.pref_update_interval_edittext)
-    EditText updateIntervalEditText;
-
-    @BindView(R.id.pref_display_base_currency_textview)
-    TextView baseCurrencyTextView;
-
-    @BindView(R.id.save_button)
-    Button saveButton;
 
     @OnClick(R.id.pref_base_currency)
     public void onBaseCurrencyPreferenceClick() {
         mListener.onBaseCurrencyPreferenceClick();
         dismiss();
     }
-
-    @BindView(R.id.base_currency_imageview)
-    ImageView baseCurrencyImageView;
-
-    private BaseCurrencyPreferenceClickListener mListener;
 
     @Override
     public void onAttach(Context context) {
@@ -90,10 +85,6 @@ public class SettingsDialogFragment extends BottomSheetDialogFragment {
         }
     }
 
-    public interface BaseCurrencyPreferenceClickListener {
-        void onBaseCurrencyPreferenceClick();
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -120,5 +111,9 @@ public class SettingsDialogFragment extends BottomSheetDialogFragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public interface BaseCurrencyPreferenceClickListener {
+        void onBaseCurrencyPreferenceClick();
     }
 }

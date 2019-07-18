@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#00000000"
@@ -49,10 +48,10 @@
             <LinearLayout style="@style/AboutLinearLayoutStyle">
 
                 <TextView
+                    android:id="@+id/app_name_version_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="12dp"
-                    android:id="@+id/app_name_version_textview"
                     android:text="Currency (1.0.0)"
                     android:textColor="@color/colorPrimaryDark" />
 
@@ -78,9 +77,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginBottom="4dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
-                android:layout_marginBottom="4dp"
                 android:text="@string/licenses_upper"
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimary"
@@ -168,6 +167,48 @@
                     <TextView
                         style="@style/LicenseTextViewStyle"
                         android:text="@string/picasso_license" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LicencesLinearLayoutStyle">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="12dp"
+                        android:text="@string/mpandroidchart"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@color/colorPrimary" />
+
+                    <TextView
+                        style="@style/LicenseTextViewStyle"
+                        android:text="@string/mpandroidchart_license" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LicencesLinearLayoutStyle">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="12dp"
+                        android:text="@string/expandable_layout"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@color/colorPrimary" />
+
+                    <TextView
+                        style="@style/LicenseTextViewStyle"
+                        android:text="@string/expandable_layout_license" />
                 </LinearLayout>
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>

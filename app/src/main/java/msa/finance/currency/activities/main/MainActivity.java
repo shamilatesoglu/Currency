@@ -16,6 +16,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -24,8 +25,11 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,11 +59,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
     @BindView(R.id.base_currency_textview)
     TextView baseCurrencyTextView;
 
-    @OnClick(R.id.base_currency_textview)
-    public void onClickBaseCurrencyTextView(View v) {
-        BaseCurrencyListDialogFragment.newInstance(mCurrencyCodeList).show(getSupportFragmentManager(), "BaseCurrencyDialog");
-    }
-
     @BindView(R.id.time_textview)
     TextView timeTextView;
 
@@ -77,14 +76,16 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
 
     private CurrenciesViewModel mCurrenciesViewModel;
     private SettingsViewModel mSettingsViewModel;
-
     private CurrencyRecyclerViewAdapter mCurrencyRecyclerViewAdapter;
-
     private ArrayList<String> mCurrencyCodeList;
-
     private List<String> mCurrenciesToShowList;
-
     private Snackbar mAPIAvailabilitySnackbar;
+    private Map<String, Map<String, Double>> mCurrencyToHistoryMap = new HashMap<>();
+
+    @OnClick(R.id.base_currency_textview)
+    public void onClickBaseCurrencyTextView(View v) {
+        BaseCurrencyListDialogFragment.newInstance(mCurrencyCodeList).show(getSupportFragmentManager(), "BaseCurrencyDialog");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
         mSettingsViewModel.getSettings().observe(this, settings -> {
             if (settings != null) {
                 baseCurrencyTextView.setText(String.format("BASE: %s", settings.getBaseCurrencyCode()));
+                mCurrencyRecyclerViewAdapter.notifyDataSetChanged();
             }
         });
 
@@ -120,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
                 PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.pref_key_update_interval), 2)));
 
     }
-
 
     private void configureNavigationView() {
         navigationView.setNavigationItemSelectedListener(menuItem -> {
@@ -159,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
 
     private void configureRecyclerView() {
         mCurrencyRecyclerViewAdapter = new CurrencyRecyclerViewAdapter(this);
+        mCurrencyRecyclerViewAdapter.setHistoricalRatesMap(mCurrencyToHistoryMap);
         currencyRecyclerView.setAdapter(mCurrencyRecyclerViewAdapter);
         currencyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         currencyRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -222,6 +224,26 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
                 mAPIAvailabilitySnackbar.show();
                 progressBar.setProgress(0);
             } else if (mAPIAvailabilitySnackbar.isShown()) mAPIAvailabilitySnackbar.dismiss();
+        });
+
+        mCurrenciesViewModel.getHistoricalRates().observe(this, historicalRatesResponse -> {
+            if (historicalRatesResponse != null) {
+                Map<String, Map<String, Double>> rawHistoricalRatesMap = historicalRatesResponse.getHistoricalRates();
+                Map<String, Map<String, Double>> processedHistoricalRatesMap = new HashMap<>();
+                Set<String> currencyCodeSet = rawHistoricalRatesMap.get(historicalRatesResponse.getStartDateString()).keySet();
+                for (String currencyCode : currencyCodeSet) {
+                    Map<String, Double> currentCurrencyToHistoricalRatesMap = new HashMap<>();
+                    for (String dateString : rawHistoricalRatesMap.keySet()) {
+                        currentCurrencyToHistoricalRatesMap.put(dateString, rawHistoricalRatesMap.get(dateString).get(currencyCode));
+                    }
+                    processedHistoricalRatesMap.put(currencyCode, currentCurrencyToHistoricalRatesMap);
+                }
+                if (!mCurrencyToHistoryMap.equals(processedHistoricalRatesMap)) {
+                    mCurrencyToHistoryMap.clear();
+                    mCurrencyToHistoryMap.putAll(processedHistoricalRatesMap);
+                    mCurrencyRecyclerViewAdapter.notifyDataSetChanged();
+                }
+            }
         });
     }
 

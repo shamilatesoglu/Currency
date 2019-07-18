@@ -42,6 +42,8 @@ import static msa.finance.currency.util.Constants.CURRENCY_CODE_TO_COUNTRY_CODE_
 public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
 
     private static final String ARG_CURRENCY_CODES = "currency_codes";
+    private CurrencyListEditFinishedListener mListener;
+    private List<String> mNewCurrenciesToShowList = new ArrayList<>();
 
     public static CurrencyListDialogFragment newInstance(ArrayList<String> currencyCodeList) {
         final CurrencyListDialogFragment fragment = new CurrencyListDialogFragment();
@@ -51,17 +53,9 @@ public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
         return fragment;
     }
 
-    private CurrencyListEditFinishedListener mListener;
-
-    private List<String> mNewCurrenciesToShowList = new ArrayList<>();
-
     public CurrencyListDialogFragment setInitialCurrenciesToShowList(List<String> initialCurrenciesToShowList) {
         mNewCurrenciesToShowList = new ArrayList<>(initialCurrenciesToShowList);
         return this;
-    }
-
-    public interface CurrencyListEditFinishedListener {
-        void onFinishEditingCurrencyList(List<String> newCurrenciesToShowList);
     }
 
     @Override
@@ -114,6 +108,10 @@ public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public interface CurrencyListEditFinishedListener {
+        void onFinishEditingCurrencyList(List<String> newCurrenciesToShowList);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

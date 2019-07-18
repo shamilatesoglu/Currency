@@ -32,6 +32,8 @@ import static msa.finance.currency.util.Constants.CURRENCY_CODE_TO_COUNTRY_CODE_
 
 public class BaseCurrencyListDialogFragment extends BottomSheetDialogFragment {
     private static final String ARG_CURRENCY_CODES = "currency_codes";
+    private BaseCurrencyEditFinishedListener mListener;
+    private String mNewBaseCurrencyCode;
 
     public static BaseCurrencyListDialogFragment newInstance(ArrayList<String> currencyCodeList) {
         final BaseCurrencyListDialogFragment fragment = new BaseCurrencyListDialogFragment();
@@ -41,20 +43,11 @@ public class BaseCurrencyListDialogFragment extends BottomSheetDialogFragment {
         return fragment;
     }
 
-    private BaseCurrencyEditFinishedListener mListener;
-
-    private String mNewBaseCurrencyCode;
-
-    public interface BaseCurrencyEditFinishedListener {
-        void onFinishEditingBaseCurrency(String newBaseCurrencyCode);
-    }
-
     @Override
     public void onDismiss(DialogInterface dialog) {
         mListener.onFinishEditingBaseCurrency(mNewBaseCurrencyCode);
         super.onDismiss(dialog);
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -74,26 +67,6 @@ public class BaseCurrencyListDialogFragment extends BottomSheetDialogFragment {
             getDialog().getWindow().findViewById(R.id.design_bottom_sheet).setBackgroundResource(android.R.color.transparent);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    class ViewHolder extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.item_layout)
-        ConstraintLayout itemLayout;
-
-        @BindView(R.id.country_flag_imageview)
-        ImageView countryFlagImageView;
-
-        @BindView(R.id.currency_code_textview)
-        TextView currencyCodeTextView;
-
-        @BindView(R.id.currency_radiobutton)
-        RadioButton currencyRadioButton;
-
-        ViewHolder(View view) {
-            super(view);
-            ButterKnife.bind(this, view);
         }
     }
 
@@ -117,6 +90,29 @@ public class BaseCurrencyListDialogFragment extends BottomSheetDialogFragment {
         } else dismiss();
     }
 
+    public interface BaseCurrencyEditFinishedListener {
+        void onFinishEditingBaseCurrency(String newBaseCurrencyCode);
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.item_layout)
+        ConstraintLayout itemLayout;
+
+        @BindView(R.id.country_flag_imageview)
+        ImageView countryFlagImageView;
+
+        @BindView(R.id.currency_code_textview)
+        TextView currencyCodeTextView;
+
+        @BindView(R.id.currency_radiobutton)
+        RadioButton currencyRadioButton;
+
+        ViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+    }
 
     private class CurrencyListAdapter extends RecyclerView.Adapter<BaseCurrencyListDialogFragment.ViewHolder> {
 

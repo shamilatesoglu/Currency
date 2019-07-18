@@ -1,4 +1,4 @@
-package msa.finance.currency.data.retrofit;
+package msa.finance.currency.data.retrofit.latest;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ExchangeRatesAPIResponse {
+public class LatestExchangeRatesResponse {
 
     @SerializedName("base")
     @Expose
@@ -22,6 +22,8 @@ public class ExchangeRatesAPIResponse {
     @SerializedName("rates")
     @Expose
     private Map<String, Double> mRates;
+    private long mTimestamp;
+    private int mProgressUntilNextCall;
 
     public Double getRate(String name) {
         return mRates.get(name);
@@ -34,7 +36,7 @@ public class ExchangeRatesAPIResponse {
     public ArrayList<String> getCurrencyCodeList() {
         ArrayList<String> currencyCodeList = new ArrayList<>(mRates.keySet());
         currencyCodeList.add(mBaseCurrency);
-        Set<String> unique = new HashSet<> (currencyCodeList);
+        Set<String> unique = new HashSet<>(currencyCodeList);
         currencyCodeList = new ArrayList<>(unique);
         Collections.sort(currencyCodeList);
         return currencyCodeList;
@@ -44,31 +46,27 @@ public class ExchangeRatesAPIResponse {
         return mBaseCurrency;
     }
 
-    private long mTimestamp;
-
-    public void setTimestamp(long timestamp) {
-        mTimestamp = timestamp;
+    public void setBaseCurrency(String baseCurrency) {
+        mBaseCurrency = baseCurrency;
     }
 
     public long getTimestamp() {
         return mTimestamp;
     }
 
-    private int mProgressUntilNextCall;
-
-    public void setProgressUntilNextCall(int progress) {
-        mProgressUntilNextCall = progress;
+    public void setTimestamp(long timestamp) {
+        mTimestamp = timestamp;
     }
 
     public int getProgressUntilNextCall() {
         return mProgressUntilNextCall;
     }
 
-    public boolean isSuccessful () {
-        return mRates != null && mRates.size() > 0;
+    public void setProgressUntilNextCall(int progress) {
+        mProgressUntilNextCall = progress;
     }
 
-    public void setBaseCurrency(String baseCurrency) {
-        mBaseCurrency = baseCurrency;
+    public boolean isSuccessful() {
+        return mRates != null && mRates.size() > 0;
     }
 }

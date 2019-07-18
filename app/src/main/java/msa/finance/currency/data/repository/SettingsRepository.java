@@ -4,17 +4,16 @@ import android.arch.lifecycle.MutableLiveData;
 
 public class SettingsRepository {
     private static SettingsRepository sSettingsRepository;
-
-    public static SettingsRepository getInstance() {
-        return (sSettingsRepository == null) ? sSettingsRepository = new SettingsRepository() : sSettingsRepository;
-    }
+    private MutableLiveData<Settings> mSettingsMutableLiveData;
 
     private SettingsRepository() {
         mSettingsMutableLiveData = new MutableLiveData<>();
         mSettingsMutableLiveData.setValue(new Settings("EUR", 5, 2));
     }
 
-    private MutableLiveData<Settings> mSettingsMutableLiveData;
+    public static SettingsRepository getInstance() {
+        return (sSettingsRepository == null) ? sSettingsRepository = new SettingsRepository() : sSettingsRepository;
+    }
 
     public MutableLiveData<Settings> getSettings() {
         return mSettingsMutableLiveData;
