@@ -116,7 +116,7 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<CurrencyRe
             viewHolder.valueTextView.setSelected(true);
             viewHolder.baseCurrencyCodeTextView.setSelected(true);
 
-            viewHolder.graphExpandableLayout.setExpanded(mExpandedItemCurrencyCodeList.contains(mRateList.get(position).getCurrencyCode()));
+            viewHolder.graphExpandableLayout.setExpanded(mExpandedItemCurrencyCodeList.contains(mRateList.get(position).getCurrencyCode()),false);
 
             configureLineChart(viewHolder, mRateList.get(position).getCurrencyCode());
         }
@@ -194,21 +194,25 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<CurrencyRe
             super(itemView);
             ButterKnife.bind(this, itemView);
             configureLineChart();
+
+            graphExpandableLayout.setOnExpansionUpdateListener((expansionFraction, state) -> {
+                switch (state) {
+                    case ExpandableLayout.State.COLLAPSING:
+                    case ExpandableLayout.State.COLLAPSED:
+                        mExpandedItemCurrencyCodeList.remove(currency);
+                        break;
+                    case ExpandableLayout.State.EXPANDING:
+                    case ExpandableLayout.State.EXPANDED:
+                        mExpandedItemCurrencyCodeList.add(currency);
+                        break;
+                }
+            });
         }
 
         @OnClick(R.id.currency_container_framelayout)
         public void toggleExpandableLayout() {
             graphExpandableLayout.toggle();
-            graphExpandableLayout.setOnExpansionUpdateListener((expansionFraction, state) -> {
-                switch (state) {
-                    case ExpandableLayout.State.COLLAPSING:
-                        mExpandedItemCurrencyCodeList.remove(currency);
-                        break;
-                    case ExpandableLayout.State.EXPANDING:
-                        mExpandedItemCurrencyCodeList.add(currency);
-                        break;
-                }
-            });
+
         }
 
         private void configureLineChart() {
@@ -223,7 +227,7 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<CurrencyRe
             historicalRatesLineChart.getXAxis().setValueFormatter(new ValueFormatter() {
                 @Override
                 public String getFormattedValue(float value) {
-                    return new SimpleDateFormat("dd MMM", Locale.US).format(new Date(Float.valueOf(value).longValue()));
+                    return new SimpleDateFormat("MMM dd", Locale.US).format(new Date(Float.valueOf(value).longValue()));
                 }
             });
             historicalRatesLineChart.setMarker(new CustomMarkerView(mMainActivity, R.layout.marker_view));
