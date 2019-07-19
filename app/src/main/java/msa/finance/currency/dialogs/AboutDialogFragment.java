@@ -1,6 +1,7 @@
 package msa.finance.currency.dialogs;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.view.LayoutInflater;
@@ -20,13 +21,14 @@ public class AboutDialogFragment extends BottomSheetDialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_about_dialog, container, false);
         ((TextView) root.findViewById(R.id.app_name_version_textview)).setText(String.format("Currency (%s)", BuildConfig.VERSION_NAME));
         return root;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

@@ -1,6 +1,7 @@
 package msa.finance.currency.data.repository;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.NonNull;
 
 public class SettingsRepository {
     private static SettingsRepository sSettingsRepository;
@@ -15,6 +16,7 @@ public class SettingsRepository {
         return (sSettingsRepository == null) ? sSettingsRepository = new SettingsRepository() : sSettingsRepository;
     }
 
+    @NonNull
     public MutableLiveData<Settings> getSettings() {
         return mSettingsMutableLiveData;
     }

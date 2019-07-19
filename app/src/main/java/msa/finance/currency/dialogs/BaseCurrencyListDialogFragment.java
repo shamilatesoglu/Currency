@@ -60,6 +60,7 @@ public class BaseCurrencyListDialogFragment extends BottomSheetDialogFragment {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

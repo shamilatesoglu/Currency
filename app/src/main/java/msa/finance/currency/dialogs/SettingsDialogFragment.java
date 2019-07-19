@@ -93,13 +93,13 @@ public class SettingsDialogFragment extends BottomSheetDialogFragment {
         ButterKnife.bind(this, root);
 
         SettingsRepository.Settings settings = SettingsRepository.getInstance().getSettings().getValue();
-        precisionEditText.setText(String.valueOf(settings.getPrecision()));
-        updateIntervalEditText.setText(String.valueOf(settings.getUpdateInterval()));
-        baseCurrencyTextView.setText(settings.getBaseCurrencyCode());
-
-        Picasso.get().load(String.format(COUNTRY_FLAG_API_FORMAT, CURRENCY_CODE_TO_COUNTRY_CODE_MAP.get(settings.getBaseCurrencyCode())))
-                .into(baseCurrencyImageView);
-
+        if (settings != null) {
+            precisionEditText.setText(String.valueOf(settings.getPrecision()));
+            updateIntervalEditText.setText(String.valueOf(settings.getUpdateInterval()));
+            baseCurrencyTextView.setText(settings.getBaseCurrencyCode());
+            Picasso.get().load(String.format(COUNTRY_FLAG_API_FORMAT, CURRENCY_CODE_TO_COUNTRY_CODE_MAP.get(settings.getBaseCurrencyCode())))
+                    .into(baseCurrencyImageView);
+        }
         return root;
     }
 

@@ -15,35 +15,30 @@
         android:layout_marginBottom="12dp"
         android:src="@mipmap/ic_launcher" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
+    <LinearLayout
+        android:id="@+id/nav_header_linearlayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/nav_header_app_name_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/nav_header_linearlayout"
-            android:orientation="vertical">
+            android:text="@string/app_name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/nav_header_app_name_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Currency"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textSize="18sp"
-                android:textColor="@color/colorWhite"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/nav_header_summary_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorWhite"
-                android:text="View up-to-date exchange rates."
-                android:visibility="visible" />
-        </LinearLayout>
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/nav_header_summary_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_summary"
+            android:textColor="@color/colorWhite"
+            android:visibility="visible" />
+    </LinearLayout>
 
 </LinearLayout>

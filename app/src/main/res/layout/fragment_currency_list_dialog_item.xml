@@ -25,7 +25,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:text="TRY"
         android:textColor="@color/colorPrimary"
         android:textSize="18sp"
         android:textStyle="bold"

@@ -133,7 +133,7 @@ public class ExchangeRatesRepository {
         Date today = new Date();
         Calendar cal = new GregorianCalendar();
         cal.setTime(today);
-        cal.add(Calendar.DAY_OF_MONTH, -30);
+        cal.add(Calendar.DATE, -90);
         Date today30 = cal.getTime();
         return new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(today30);
     }
