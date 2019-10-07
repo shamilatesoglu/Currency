@@ -140,7 +140,6 @@ public class CurrencyRecyclerViewAdapter extends RecyclerView.Adapter<CurrencyRe
                 return 0;
             });
 
-            int i = 0;
             for (String dateStr : dateStringList) {
                 rateEntries.add(new Entry(new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(dateStr).getTime(),
                         mCurrencyToHistoricalRatesMap.get(targetCurrencyCode).get(dateStr).floatValue()));

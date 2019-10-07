@@ -12,8 +12,8 @@
         android:orientation="vertical">
 
         <FrameLayout
-            android:layout_width="match_parent"
             android:id="@+id/currency_container_framelayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
@@ -31,7 +31,6 @@
                     android:ellipsize="marquee"
                     android:marqueeRepeatLimit="marquee_forever"
                     android:singleLine="true"
-                    android:text="USD"
                     android:textColor="@color/colorPrimary"
                     android:textSize="24sp"
                     android:textStyle="normal"
@@ -55,7 +54,6 @@
                     android:marqueeRepeatLimit="marquee_forever"
                     android:maxWidth="150dp"
                     android:singleLine="true"
-                    android:text="5.61 TRY"
                     android:textColor="@color/colorPrimary"
                     android:textSize="24sp"
                     android:textStyle="normal"
@@ -97,7 +95,7 @@
             android:layout_height="wrap_content"
             app:el_expanded="false">
 
-            <include layout="@layout/historical_rates_line_chart"/>
+            <include layout="@layout/historical_rates_line_chart" />
 
         </net.cachapa.expandablelayout.ExpandableLayout>
 

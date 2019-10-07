@@ -27,11 +27,12 @@
     <string name="pref_key_base_currency">pref_key_base_currency</string>
     <string name="save">SAVE</string>
     <string name="right_arrow">→</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="pref_summary_base_currency">Tap to set base currency.</string>
     <string name="pref_title_base_currency">Base Currency</string>
     <string name="select_base_currency">SELECT BASE CURRENCY</string>
-    <string name="chart_view_title">LAST 30 DAYS</string>
+    <string name="chart_view_title">LAST 90 DAYS</string>
     <string name="mpandroidchart">MPAndroidChart</string>
     <string name="expandable_layout">Expandable Layout</string>
+    <string name="app_summary">View up-to-date exchange rates.</string>
 </resources>

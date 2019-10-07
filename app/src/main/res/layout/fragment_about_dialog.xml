@@ -2,57 +2,109 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00000000"
     android:orientation="vertical">
 
-    <LinearLayout
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@drawable/currency_list_dialog_title_background" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="@string/about_upper"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGray" />
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:background="@color/colorWhite">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:background="@drawable/currency_list_dialog_title_background" />
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="49dp"
-            android:background="@color/colorWhite">
+        <LinearLayout style="@style/AboutLinearLayoutStyle">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/app_name_version_textview"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="6dp"
-                android:layout_marginBottom="6dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:text="@string/about_upper"
-                android:textAlignment="center"
-                android:textColor="@color/colorPrimary"
-                android:textSize="28sp"
-                android:textStyle="bold" />
-        </FrameLayout>
+                android:layout_margin="12dp"
+                android:textColor="@color/colorPrimaryDark" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorGray" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:background="@color/colorPrimary" />
 
-        <FrameLayout
+            <TextView
+                style="@style/AboutTextViewStyle"
+                android:text="@string/about_content" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="4dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="@string/licenses_upper"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGray" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorWhite">
+            android:background="@color/colorWhite"
+            android:orientation="vertical">
 
-            <LinearLayout style="@style/AboutLinearLayoutStyle">
+
+            <LinearLayout
+                style="@style/LicencesLinearLayoutStyle"
+                android:layout_marginTop="12dp">
 
                 <TextView
-                    android:id="@+id/app_name_version_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="12dp"
-                    android:text="Currency (1.0.0)"
+                    android:text="@string/butterknife"
                     android:textColor="@color/colorPrimaryDark" />
 
                 <View
@@ -63,156 +115,95 @@
                     android:background="@color/colorPrimary" />
 
                 <TextView
-                    style="@style/AboutTextViewStyle"
-                    android:text="@string/about_content" />
+                    style="@style/LicenseTextViewStyle"
+                    android:text="@string/butterknife_license" />
             </LinearLayout>
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorWhite">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="4dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:text="@string/licenses_upper"
-                android:textAlignment="center"
-                android:textColor="@color/colorPrimary"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-        </FrameLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorGray" />
-
-        <android.support.v4.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:orientation="vertical">
 
 
-                <LinearLayout
-                    style="@style/LicencesLinearLayoutStyle"
-                    android:layout_marginTop="12dp">
+            <LinearLayout style="@style/LicencesLinearLayoutStyle">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="12dp"
-                        android:text="@string/butterknife"
-                        android:textColor="@color/colorPrimaryDark" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="12dp"
+                    android:text="@string/retrofit"
+                    android:textColor="@color/colorPrimaryDark" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginEnd="12dp"
-                        android:background="@color/colorPrimary" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@color/colorPrimary" />
 
-                    <TextView
-                        style="@style/LicenseTextViewStyle"
-                        android:text="@string/butterknife_license" />
-                </LinearLayout>
-
-
-                <LinearLayout style="@style/LicencesLinearLayoutStyle">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="12dp"
-                        android:text="@string/retrofit"
-                        android:textColor="@color/colorPrimaryDark" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginEnd="12dp"
-                        android:background="@color/colorPrimary" />
-
-                    <TextView
-                        style="@style/LicenseTextViewStyle"
-                        android:text="@string/retrofit_license" />
-                </LinearLayout>
-
-                <LinearLayout style="@style/LicencesLinearLayoutStyle">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="12dp"
-                        android:text="@string/picasso"
-                        android:textColor="@color/colorPrimaryDark" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginEnd="12dp"
-                        android:background="@color/colorPrimary" />
-
-                    <TextView
-                        style="@style/LicenseTextViewStyle"
-                        android:text="@string/picasso_license" />
-                </LinearLayout>
-
-                <LinearLayout style="@style/LicencesLinearLayoutStyle">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="12dp"
-                        android:text="@string/mpandroidchart"
-                        android:textColor="@color/colorPrimaryDark" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginEnd="12dp"
-                        android:background="@color/colorPrimary" />
-
-                    <TextView
-                        style="@style/LicenseTextViewStyle"
-                        android:text="@string/mpandroidchart_license" />
-                </LinearLayout>
-
-                <LinearLayout style="@style/LicencesLinearLayoutStyle">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="12dp"
-                        android:text="@string/expandable_layout"
-                        android:textColor="@color/colorPrimaryDark" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginEnd="12dp"
-                        android:background="@color/colorPrimary" />
-
-                    <TextView
-                        style="@style/LicenseTextViewStyle"
-                        android:text="@string/expandable_layout_license" />
-                </LinearLayout>
+                <TextView
+                    style="@style/LicenseTextViewStyle"
+                    android:text="@string/retrofit_license" />
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
 
-    </LinearLayout>
+            <LinearLayout style="@style/LicencesLinearLayoutStyle">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="12dp"
+                    android:text="@string/picasso"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    style="@style/LicenseTextViewStyle"
+                    android:text="@string/picasso_license" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/LicencesLinearLayoutStyle">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="12dp"
+                    android:text="@string/mpandroidchart"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    style="@style/LicenseTextViewStyle"
+                    android:text="@string/mpandroidchart_license" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/LicencesLinearLayoutStyle">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="12dp"
+                    android:text="@string/expandable_layout"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    style="@style/LicenseTextViewStyle"
+                    android:text="@string/expandable_layout_license" />
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 
 </LinearLayout>

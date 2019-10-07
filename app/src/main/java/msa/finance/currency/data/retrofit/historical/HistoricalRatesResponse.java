@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Map;
+import java.util.Set;
 
 public class HistoricalRatesResponse {
 
@@ -38,5 +39,14 @@ public class HistoricalRatesResponse {
 
     public Map<String, Map<String, Double>> getHistoricalRates() {
         return mHistoricalRates;
+    }
+
+    public Set<String> getCurrencyCodeSet() {
+        for (String date : mHistoricalRates.keySet()){
+            if (mHistoricalRates.get(date) != null) {
+                return mHistoricalRates.get(date).keySet();
+            }
+        }
+        return null;
     }
 }

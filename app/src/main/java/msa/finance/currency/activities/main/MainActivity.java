@@ -16,7 +16,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -230,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListDialo
             if (historicalRatesResponse != null) {
                 Map<String, Map<String, Double>> rawHistoricalRatesMap = historicalRatesResponse.getHistoricalRates();
                 Map<String, Map<String, Double>> processedHistoricalRatesMap = new HashMap<>();
-                Set<String> currencyCodeSet = rawHistoricalRatesMap.get(historicalRatesResponse.getStartDateString()).keySet();
+                Set<String> currencyCodeSet = historicalRatesResponse.getCurrencyCodeSet();
                 for (String currencyCode : currencyCodeSet) {
                     Map<String, Double> currentCurrencyToHistoricalRatesMap = new HashMap<>();
                     for (String dateString : rawHistoricalRatesMap.keySet()) {

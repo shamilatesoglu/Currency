@@ -95,11 +95,7 @@ public class CurrencyListDialogFragment extends BottomSheetDialogFragment {
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
